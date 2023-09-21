@@ -47,13 +47,14 @@ recommended_versions = {
 def check_security_header_versions(headers):
     outdated_headers = {}
     for header, value in headers.items():
-        if header in recommended_versions and value != recommended_versions[header]:
-            outdated_headers[header] = value
+        if header in recommended_versions and value.lower() != recommended_versions[header].lower():
+            outdated_headers[header] = (value[:38]+"..." if len(value) > 40 else value)
     return outdated_headers
 
 parser = argparse.ArgumentParser(description="Finder Security Headers")
 parser.add_argument("-t","--target",help="Show http security headers enabled and missing")
 parser.add_argument("-v","--verbose",action="store_true",help="Show full response")
+parser.add_argument("--compare-versions",action="store_true",help="Show the recomended version for headers in use.")
 parser = parser.parse_args()
 
 try:
@@ -131,11 +132,14 @@ def verbose():
 
 if __name__ == '__main__':
     main()
-    outdated_headers = check_security_header_versions(headers)
-    if outdated_headers:
-        print("\n[!] The following headers are outdated:")
-        for header, value in outdated_headers.items():
-            print(f"  - {header}: Current value: {value}, Recommended: {recommended_versions[header]}")
+    if( parser.compare_versions ):
+        outdated_headers = check_security_header_versions(headers)
+        if outdated_headers:
+            print("\n[!] The following headers are outdated:")
+            for header, value in outdated_headers.items():
+                print(f"    - {header}:")
+                print(f"        Current value: {value}")
+                print(f"        Recommended:   {recommended_versions[header]}")
     if parser.verbose:
         verbose()
     elif parser.target:
