@@ -35,11 +35,17 @@ security_headers = [
 
 recommended_versions = {
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-    "Content-Security-Policy": "default-src 'self';",
-    "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "SAMEORIGIN",
-    "X-XSS-Protection": "1; mode=block",
+    "X-Content-Type-Options": "nosniff",
+    "Content-Security-Policy": "default-src 'self';",
+    "X-Permitted-Cross-Domain-Policies": "none",
     "Referrer-Policy": "no-referrer-when-downgrade",
+    "Clear-Site-Data": '"cache", "cookies", "storage", "executionContexts"',
+    "Cross-Origin-Embedder-Policy": "require-corp",
+    "Cross-Origin-Opener-Policy": "same-origin",
+    "Cross-Origin-Resource-Policy": "same-origin",
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    "X-XSS-Protection": "1; mode=block",
     "Feature-Policy": "vibrate 'none'; geolocation 'none';",
     "Permissions-Policy": "geolocation=(), microphone=()",
     "Expect-CT": "max-age=86400, enforce"
