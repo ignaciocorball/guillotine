@@ -45,18 +45,18 @@ recommended_versions = {
     "Expect-CT": "max-age=86400, enforce"
 }
 
-def check_security_header_versions(headers):
+def check_security_header_versions(headers, parser):
     outdated_headers = {}
     for header, value in headers.items():
         if header in recommended_versions and value.lower() != recommended_versions[header].lower():
-            outdated_headers[header] = (value[:38]+"..." if len(value) > 40 else value)
+            outdated_headers[header] = (value[:38]+"..." if (len(value) > 40 or not parser.verbose) else value)
     return outdated_headers
 
 parser = argparse.ArgumentParser(description="Finder Security Headers")
-parser.add_argument("-t","--target",help="Show http security headers enabled and missing")
-parser.add_argument("-v","--verbose",action="store_true",help="Show full response")
+parser.add_argument("-t","--target",help="Show http security headers enabled and missing", required=true)
 parser.add_argument("--compare-versions",action="store_true",help="Show the recomended version for headers in use.")
 parser.add_argument("--ntlm", help="Use NTLM Authentication. Format: [<domain>\\\\]<username>:<password>")
+parser.add_argument("-v","--verbose",action="store_true",help="Show full response")
 parser = parser.parse_args()
 
 try:
@@ -140,8 +140,8 @@ def verbose():
 
 if __name__ == '__main__':
     main()
-    if( parser.compare_versions ):
-        outdated_headers = check_security_header_versions(headers)
+    if( parser.compare_versions or parser.verbose ):
+        outdated_headers = check_security_header_versions(headers, parser)
         if outdated_headers:
             print("\n[!] The following headers are outdated:")
             for header, value in outdated_headers.items():
