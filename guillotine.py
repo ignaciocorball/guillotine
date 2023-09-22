@@ -14,6 +14,7 @@ try:
     import requests
     import argparse
     from urllib3.exceptions import InsecureRequestWarning
+    from requests.auth import HTTPBasicAuth
     from requests_ntlm import HttpNtlmAuth
 except ImportError as err:
     print("Some libraries are missing:")
@@ -62,6 +63,7 @@ parser = argparse.ArgumentParser(description="Finder Security Headers")
 parser.add_argument("-t","--target",help="Show http security headers enabled and missing", required=true)
 parser.add_argument("--compare-versions",action="store_true",help="Show the recomended version for headers in use.")
 parser.add_argument("--ntlm", help="Use NTLM Authentication. Format: [<domain>\\\\]<username>:<password>")
+parser.add_argument("--basic", help="Use BASIC Authentication. Format: <username>:<password>")
 parser.add_argument("-v","--verbose",action="store_true",help="Show full response")
 parser = parser.parse_args()
 
@@ -69,7 +71,10 @@ try:
     requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
     
     auth = None
-    if( parser.ntlm ):
+    if( parser.basic ):
+        basicAuth = parser.basic.split(":")
+        auth = HTTPBasicAuth(basicAuth[0], "".join(basicAuth[1:]))
+    elif( parser.ntlm ):
         ntlmAuth = parser.ntlm.split(":")
         auth = HttpNtlmAuth(ntlmAuth[0], "".join(ntlmAuth[1:]))
 
