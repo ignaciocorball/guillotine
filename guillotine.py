@@ -3,10 +3,10 @@
 
 #------------------------------------------------------------
 #-----            GUILLOTINE                           -----|
-# ----            FINDER HTTP SECURITY HEADERS          ----|
-# ----            Gohanckz                              ----|
-# ----            Contact : igonzalez@pwnsec.cl         ----|
-# ----            Version : 2.0                         ----|
+#----             FINDER HTTP SECURITY HEADERS          ----|
+#----             Gohanckz                              ----|
+#----             Contact : igonzalez@pwnsec.cl         ----|
+#----             Version : 2.0                         ----|
 #------------------------------------------------------------
 try:
     from banner import banner
@@ -21,46 +21,50 @@ except ImportError as err:
     print(err)
 
 security_headers = [
-    "Strict-Transport-Security",
-    "X-Frame-Options",
-    "X-Content-Type-Options",
-    "Content-Security-Policy",
-    "X-Permitted-Cross-Domain-Policies",
-    "Referrer-Policy",
-    "Clear-Site-Data",
-    "Cross-Origin-Embedder-Policy",
-    "Cross-Origin-Opener-Policy",
-    "Cross-Origin-Resource-Policy",
-    "Cache-Control"
+    "Strict-Transport-Security".lower(),
+    "X-Frame-Options".lower(),
+    "X-Content-Type-Options".lower(),
+    "Content-Security-Policy".lower(),
+    "X-Permitted-Cross-Domain-Policies".lower(),
+    "Referrer-Policy".lower(),
+    "Clear-Site-Data".lower(),
+    "Cross-Origin-Embedder-Policy".lower(),
+    "Cross-Origin-Opener-Policy".lower(),
+    "Cross-Origin-Resource-Policy".lower(),
+    "Cache-Control".lower(),
 ]
 
 recommended_versions = {
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-    "X-Frame-Options": "SAMEORIGIN",
-    "X-Content-Type-Options": "nosniff",
-    "Content-Security-Policy": "default-src 'self';",
-    "X-Permitted-Cross-Domain-Policies": "none",
-    "Referrer-Policy": "no-referrer-when-downgrade",
-    "Clear-Site-Data": '"cache", "cookies", "storage", "executionContexts"',
-    "Cross-Origin-Embedder-Policy": "require-corp",
-    "Cross-Origin-Opener-Policy": "same-origin",
-    "Cross-Origin-Resource-Policy": "same-origin",
-    "Cache-Control": "no-cache, no-store, must-revalidate",
-    "X-XSS-Protection": "1; mode=block",
-    "Feature-Policy": "vibrate 'none'; geolocation 'none';",
-    "Permissions-Policy": "geolocation=(), microphone=()",
-    "Expect-CT": "max-age=86400, enforce"
+    "Strict-Transport-Security".lower(): "max-age=31536000; includeSubDomains",
+    "X-Frame-Options".lower(): "SAMEORIGIN",
+    "X-Content-Type-Options".lower(): "nosniff",
+    "Content-Security-Policy".lower(): "default-src 'self';",
+    "X-Permitted-Cross-Domain-Policies".lower(): "none",
+    "Referrer-Policy".lower(): "no-referrer-when-downgrade",
+    "Clear-Site-Data".lower(): '"cache", "cookies", "storage", "executionContexts"',
+    "Cross-Origin-Embedder-Policy".lower(): "require-corp",
+    "Cross-Origin-Opener-Policy".lower(): "same-origin",
+    "Cross-Origin-Resource-Policy".lower(): "same-origin",
+    "Cache-Control".lower(): "no-cache, no-store, must-revalidate",
+    "X-XSS-Protection".lower(): "1; mode=block",
+    "Feature-Policy".lower(): "vibrate 'none'; geolocation 'none';",
+    "Permissions-Policy".lower(): "geolocation=(), microphone=()",
+    "Expect-CT".lower(): "max-age=86400, enforce"
 }
 
 def check_security_header_versions(headers, parser):
     outdated_headers = {}
     for header, value in headers.items():
-        if header in recommended_versions and value.lower() != recommended_versions[header].lower():
-            outdated_headers[header] = (value[:38]+"..." if (len(value) > 40 or not parser.verbose) else value)
+        if (
+                header.lower() in recommended_versions
+            ) and (
+                value.lower() != recommended_versions[header.lower()].lower()
+                ):
+            outdated_headers[header] = (value[:38]+"..." if (len(value) > 40 and not parser.verbose) else value)
     return outdated_headers
 
 parser = argparse.ArgumentParser(description="Finder Security Headers")
-parser.add_argument("-t","--target",help="Show http security headers enabled and missing", required=true)
+parser.add_argument("-t","--target",help="Show http security headers enabled and missing", required=True)
 parser.add_argument("--compare-versions",action="store_true",help="Show the recomended version for headers in use.")
 parser.add_argument("--ntlm", help="Use NTLM Authentication. Format: [<domain>\\\\]<username>:<password>")
 parser.add_argument("--basic", help="Use BASIC Authentication. Format: <username>:<password>")
@@ -94,11 +98,11 @@ try:
         info_headers.append(headers[i])
 
     for i in headers_site: 
-        if i in security_headers:
+        if i.lower() in security_headers:
             security_headers_site.append(i)
         
     for j in security_headers:
-        if not j in [h for h in headers_site]:
+        if not j.lower() in [h.lower() for h in headers_site]:
             missing_headers.append(j)
 
     table = PrettyTable()
@@ -158,7 +162,7 @@ if __name__ == '__main__':
             for header, value in outdated_headers.items():
                 print(f"    - {header}:")
                 print(f"        Current value: {value}")
-                print(f"        Recommended:   {recommended_versions[header]}")
+                print(f"        Recommended:   {recommended_versions[header.lower()]}")
     if parser.verbose:
         verbose()
     elif parser.target:
