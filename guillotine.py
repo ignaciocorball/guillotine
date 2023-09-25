@@ -6,7 +6,7 @@
 #----             FINDER HTTP SECURITY HEADERS          ----|
 #----             Gohanckz                              ----|
 #----             Contact : igonzalez@pwnsec.cl         ----|
-#----             Version : 2.0                         ----|
+#----             Version : 2.2                         ----|
 #------------------------------------------------------------
 try:
     from banner import banner
