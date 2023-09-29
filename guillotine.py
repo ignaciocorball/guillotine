@@ -103,7 +103,7 @@ try:
         
     for j in security_headers:
         if not j.lower() in [h.lower() for h in headers_site]:
-            missing_headers.append(j)
+            missing_headers.append( "-".join( [ word.capitalize() for word in j.split("-") ] ) )
 
     table = PrettyTable()
     table.add_column("Header",headers_site)
@@ -160,7 +160,8 @@ if __name__ == '__main__':
         if outdated_headers:
             print("\n[!] The following headers are outdated:")
             for header, value in outdated_headers.items():
-                print(f"    - {header}:")
+                CapHeader = "-".join( [ word.capitalize() for word in header.split("-") ] )
+                print(f"    - {CapHeader}:")
                 print(f"        Current value: {value}")
                 print(f"        Recommended:   {recommended_versions[header.lower()]}")
     if parser.verbose:
